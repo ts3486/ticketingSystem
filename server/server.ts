@@ -1,8 +1,10 @@
 import express from "express";
 import { createConnection } from "typeorm";
+import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { ApolloServer } from "apollo-server-express";
 import { TicketResolver } from "./resolvers/TicketResolver";
+import { UserResolver } from "./resolvers/UserResolver";
 
 const cors = require("cors");
 
@@ -15,7 +17,7 @@ const cors = require("cors");
     })
   );
 
-  //creating a db connection with typeorm
+  //typeormでdbに接続
   await createConnection()
     .then(() => {
       console.log("db connected");
@@ -25,14 +27,15 @@ const cors = require("cors");
     });
 
   const schema = await buildSchema({
-    resolvers: [TicketResolver],
+    resolvers: [TicketResolver, UserResolver],
   });
 
+  //Apolloサーバー
   const apolloServer = new ApolloServer({
     schema,
     context: ({ req, res }) => ({ req, res }),
     introspection: true,
-    // playground: true,
+    playground: true,
   });
 
   apolloServer.applyMiddleware({ app, cors: false });

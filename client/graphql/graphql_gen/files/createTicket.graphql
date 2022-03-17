@@ -1,0 +1,8 @@
+mutation CreateTicket($ticket: String!) {
+  createTicket(ticket: $ticket) {
+    id
+    name
+    currentOwner
+    previousOwner
+  }
+}

@@ -1,7 +1,16 @@
-import '../styles/globals.css'
-import type { AppProps } from 'next/app'
+import App from "next/app";
+import type { AppProps } from "next/app";
+import { ApolloProvider } from "@apollo/client";
+import { client } from "../apollo";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+export default class TicketSystem extends App {
+  render() {
+    const { Component, pageProps }: AppProps = this.props;
+
+    return (
+      <ApolloProvider client={client}>
+        <Component {...pageProps} />;
+      </ApolloProvider>
+    );
+  }
 }
-export default MyApp

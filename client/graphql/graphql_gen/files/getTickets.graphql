@@ -1,0 +1,8 @@
+query getTickets {
+  getTickets {
+    id
+    name
+    currentOwner
+    previousOwner
+  }
+}

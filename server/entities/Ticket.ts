@@ -1,55 +1,49 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToOne, ManyToOne, JoinColumn } from "typeorm";
-import { ObjectType, InputType, Field, Int } from "type-graphql";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToOne, JoinColumn, OneToMany } from "typeorm";
+import { ObjectType, Field, Int } from "type-graphql";
+import { User } from "./User";
+import { Event } from "./Event";
+import { TransferLog } from "./TransferLog";
 
 @ObjectType()
-@Entity("tickets")
+@Entity("ticket")
 export class Ticket extends BaseEntity {
+  @PrimaryGeneratedColumn({ type: "int" })
   @Field(() => Int)
-  @PrimaryGeneratedColumn()
   id: number;
+
   @Column("text")
-  @Field()
+  @Field(() => String)
   name: string;
 
-  @Column("text")
-  @Field()
-  cid: string;
+  @Column({ type: "int", nullable: true })
+  @Field(() => Number, { nullable: true })
+  currentOwner: number;
 
-  @Column()
-  @Field()
-  tokenId: number;
+  @Column({ type: "int", nullable: true })
+  @Field(() => Number, { nullable: true })
+  previousOwner: number;
 
-  // @Column({ type: "longblob" })
-  // @Field()
-  // file: string;
+  @ManyToOne(() => User, (user) => user.tickets)
+  @JoinColumn({ name: "currentOwner" })
+  user: User;
 
-  @Column({ type: "int" })
-  @Field(() => Int)
-  price: number;
+  @ManyToOne(() => Event, (event) => event.tickets)
+  @JoinColumn()
+  event: Event;
 
-  @Column(() => Date)
-  @Field()
-  date: Date;
-
-  @Column({ type: "int" })
-  @Field(() => Int)
-  userId: number;
+  @OneToMany(() => TransferLog, (transferLog) => transferLog.ticket)
+  @JoinColumn()
+  transferLog: TransferLog;
 }
 
-@InputType()
-export class TicketInput implements Partial<Ticket> {
-  @Field()
-  name: string;
+//リゾルバのsendTicket()の出力タイプ。
+@ObjectType()
+export class TicketAndLog {
+  @Column()
+  @Field(() => Ticket)
+  ticket: Ticket;
 
-  @Field()
-  cid: string;
-
-  @Field()
-  tokenId: number;
-
-  @Field(() => Int)
-  price: number;
-
-  @Field()
-  date: Date;
+  @Column()
+  @Field(() => TransferLog)
+  transferLog: TransferLog;
 }

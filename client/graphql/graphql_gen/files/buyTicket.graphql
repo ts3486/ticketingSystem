@@ -1,0 +1,8 @@
+mutation BuyTicket($userId: Float!, $ticketId: Float!) {
+  buyTicket(userId: $userId, ticketId: $ticketId) {
+    id
+    name
+    currentOwner
+    previousOwner
+  }
+}
